@@ -1,4 +1,4 @@
-# Otherworld-Legends-Mod 进阶教程
+# Otherworld-Legends-Mod 进阶教程 （旧版）
 在阅读本教程前，请先学习[基础教程](/README_中文.md)和[进阶教程](/README_进阶教程.md)。
 
 作者：Kolyn090
