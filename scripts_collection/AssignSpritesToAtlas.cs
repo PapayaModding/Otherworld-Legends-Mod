@@ -3,26 +3,34 @@ using UnityEditor;
 using UnityEditor.U2D;
 using UnityEngine.U2D;
 using System.Collections.Generic;
+using UnityEditor.Sprites;
 
 
-public class AssignSlicedSpritesToAtlas : EditorWindow
+public class AssignSpritesToAtlas : EditorWindow
 {
     private SpriteAtlas _spriteAtlas;
     private Texture2D _slicedTexture;
     private bool _removeExisting;
 
+
     // Persistent setting throughout editor sessions
     private const string RemoveExistingKey = "AssignSlicedSpritesToAtlas_RemoveExisting";
 
-    [MenuItem("Tools/04 Assign Sprites to SpriteAtlas", priority = 4)]
+    [MenuItem("Tools/05 Assign Sprites to SpriteAtlas (Atlas)", priority = 5)]
     public static void ShowWindow()
     {
-        GetWindow<AssignSlicedSpritesToAtlas>("Assign Sliced Sprites");
+        GetWindow<AssignSpritesToAtlas>("Assign Sprites To Atlas");
     }
 
     private void OnEnable()
     {
         _removeExisting = EditorPrefs.GetBool(RemoveExistingKey, true);
+    }
+
+    
+    private void OnDisable()
+    {
+        EditorPrefs.SetBool(RemoveExistingKey, _removeExisting);
     }
 
     private void OnGUI()
@@ -55,6 +63,7 @@ public class AssignSlicedSpritesToAtlas : EditorWindow
                 return;
             }
 
+            ConfigureSpriteAtlas(_spriteAtlas);
             AssignSprites();
         }
 
@@ -62,13 +71,23 @@ public class AssignSlicedSpritesToAtlas : EditorWindow
 
         GUILayout.Space(35);
 
-        string messageEn = "Usage: Removes all currently packed packables in the Atlas (by default) and load all sliced" + 
+        string messageEn = "Removes all currently packed packables in the Atlas (by default) and load all sliced " +
                             "Sprites in Spritesheet to it.";
-        string messageZh = "用途：移除所选择的图集中所有的资源（初始设置），并从材质文件载入所有切割过的图像。";
+        string messageZh = "移除所选择的自动图集中所有的资源（初始设置），并从材质文件载入所有切割好的图像。";
 
-        
         GUILayout.Label(messageEn, style);
         GUILayout.Label(messageZh, style);
+    }
+
+    private void ConfigureSpriteAtlas(SpriteAtlas spriteAtlas)
+    {
+        SpriteAtlasTextureSettings spriteAtlasTextureSettings = spriteAtlas.GetTextureSettings();
+        spriteAtlasTextureSettings.filterMode = FilterMode.Point;
+        spriteAtlas.SetTextureSettings(spriteAtlasTextureSettings);
+        var settings = spriteAtlas.GetPlatformSettings("DefaultTexturePlatform");
+        settings.overridden = true;
+        settings.textureCompression = TextureImporterCompression.Uncompressed;
+        spriteAtlas.SetPlatformSettings(settings);
     }
 
     private void AssignSprites()
@@ -100,10 +119,5 @@ public class AssignSlicedSpritesToAtlas : EditorWindow
         EditorUtility.SetDirty(_spriteAtlas);
         AssetDatabase.SaveAssets();
         Debug.Log($"Assigned {slicedSprites.Count} sliced sprites from {_slicedTexture.name} to {_spriteAtlas.name}");
-    }
-
-    private void OnDisable()
-    {
-        EditorPrefs.SetBool(RemoveExistingKey, _removeExisting);
     }
 }

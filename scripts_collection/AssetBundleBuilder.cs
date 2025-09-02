@@ -7,7 +7,7 @@ public class AssetBundleBuilder : EditorWindow
 {
     private BuildTarget _buildPlatform = BuildTarget.StandaloneWindows64;
 
-    [MenuItem("Tools/05 Build Bundles", priority = 5)]
+    [MenuItem("Tools/03 Build Bundles", priority = 3)]
     public static void ShowWindow()
     {
         GetWindow<AssetBundleBuilder>("Build Bundles");
@@ -35,10 +35,10 @@ public class AssetBundleBuilder : EditorWindow
         }
         GUILayout.Space(35);
 
-        string messageEn = "Pack *all* AssetBundles in the project. The best practice is to tag only" +
-                            "AssetBundles that are necessary. In this way you can save some time and" +
+        string messageEn = "Pack *all* AssetBundles in the project. The best practice is to tag only " +
+                            "AssetBundles that are necessary. In this way you can save some time and " +
                             "resources.";
-        string messageZh = "为项目中所有的资源包进行打包。请只标注你目前所需的资源包。这样会节省" +
+        string messageZh = "为项目中所有的资源包进行打包。请只标注你目前所需的资源包。这样可以节省" +
                             "时间和资源。";
 
         GUILayout.Label(messageEn, style);
@@ -51,6 +51,7 @@ public class AssetBundleBuilder : EditorWindow
         if (!Directory.Exists(path)) Directory.CreateDirectory(path);
         BuildPipeline.BuildAssetBundles(path, BuildAssetBundleOptions.None, target);
 
+        Debug.Log("All assets has been built to Assets/AssetBundles.");
         Debug.Log("Please don't forget to assign bundle name.");
     }
 }
